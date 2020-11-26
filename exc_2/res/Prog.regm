@@ -1,0 +1,35 @@
+'Berechnen der Summe von i = 0 bis n
+
+'Zähler i auf 0 setzen
+LDK 0
+STA 1
+
+'Konstante 1 speichern, wird zum Inkrementieren von i verwendet
+LDK 1
+STA 4
+
+'Nutzereingabe abfragen (Ganzzahl n)
+INP 3
+
+'i++
+LDA 1
+ADD 4
+STA 1
+
+'Aktuellen Zählerstand i zum Ergebnis addieren
+LDA 2
+ADD 1
+STA 2
+
+'Prüfe, ob n == i
+'falls nicht: Wiederhole die Schleife ab i++
+'falls ja: beende die Schleife
+LDA 3
+SUB 1
+JNE 5
+
+'Ausgeben des Ergebnis
+OUT 2
+
+'Beenden des Programms
+HLT 99
