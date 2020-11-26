@@ -49,4 +49,5 @@ public class TestNull {
 		System.out.println("rndTest: " + rndTest);
 		System.out.println("rndCurr: " + rndCurr);
 	}
+	
 }
