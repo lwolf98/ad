@@ -1,14 +1,18 @@
 package exc_7.searchtree;
 
 public class SearchTreeMasterDeleter <T extends Comparable<T>> {
-	private TreeElement root;
+	protected TreeElement root;
 	
-	private enum Direction {
+	protected enum Direction {
 		Left,
 		Right
 	}
 	
-	private class TreeElement {
+	protected Direction invertDir(Direction dir) {
+		return dir == Direction.Left ? Direction.Right : Direction.Left;
+	}
+	
+	protected class TreeElement {
 		public T value;
 		public TreeElement left;
 		public TreeElement right;
@@ -32,7 +36,7 @@ public class SearchTreeMasterDeleter <T extends Comparable<T>> {
 		}
 	}
 	
-	private class StepLog {
+	protected class StepLog {
 		public TreeElement cur;
 		public TreeElement prev;
 		public Direction dir;
@@ -44,26 +48,31 @@ public class SearchTreeMasterDeleter <T extends Comparable<T>> {
 		}
 	}
 	
+	protected class ElemProcessed {
+		public void perform(TreeElement elem, Direction dir) {
+		}
+	}
+	
 	public SearchTreeMasterDeleter() {
 		//...
 	}
 	
-	private void insert(TreeElement curRoot, TreeElement elem) {
+	protected void insert(TreeElement curRoot, TreeElement elem, ElemProcessed p) {
 		if(elem.value.compareTo(curRoot.value) <= 0) {
 			if(curRoot.left == null)
 				curRoot.left = elem;
 			else
-				insert(curRoot.left, elem);
+				insert(curRoot.left, elem, p);
+
+			p.perform(curRoot, Direction.Left);
 		} else {
 			if(curRoot.right == null)
 				curRoot.right = elem;
 			else
-				insert(curRoot.right, elem);
+				insert(curRoot.right, elem, p);
+			
+			p.perform(curRoot, Direction.Right);
 		}
-	}
-	
-	private void deleteTree(TreeElement root) {
-		//...
 	}
 	
 	private void print(TreeElement root) {
@@ -101,10 +110,6 @@ public class SearchTreeMasterDeleter <T extends Comparable<T>> {
 		return null;
 	}
 	
-	private StepLog getLast(TreeElement localRoot, Direction dir) {
-		return getLast(localRoot, dir, null);
-	}
-	
 	private StepLog getLast(TreeElement localRoot, Direction dir, TreeElement localRootPrev) {
 		TreeElement cur = localRoot;
 		TreeElement prev = localRootPrev;
@@ -134,7 +139,7 @@ public class SearchTreeMasterDeleter <T extends Comparable<T>> {
 		if(root == null)
 			root = elem;
 		else
-			insert(root, elem);
+			insert(root, elem, new ElemProcessed());
 	}
 	
 	public boolean contains(T value) {
@@ -216,5 +221,45 @@ public class SearchTreeMasterDeleter <T extends Comparable<T>> {
 	public void print() {
 		print(root);
 		System.out.println();
+	}
+	
+	public String printPre() {
+		String s = printPre(root);
+		System.out.println(s);
+		return s;
+	}
+	
+	public void printPost() {
+		printPost(root);
+		System.out.println();
+	}
+	
+	private String printPre(TreeElement root) {
+		String s = "";
+		if(root != null) {
+			s += "(" + root.value + ",";
+			s += printPre(root.left) + ",";
+			s += printPre(root.right) + ")";
+		} else {
+			s += "n";
+		}
+		
+		return s;
+	}
+	
+	private void printPost(TreeElement root) {
+		if(root != null) {
+			System.out.print("(");
+			printPost(root.left); System.out.print(",");
+			printPost(root.right);
+			System.out.print("," + root.value + ")");
+		} else {
+			System.out.print("n");
+		}
+	}
+	
+	public SearchTreeMasterDeleter(T[] arr) {
+		for(T e : arr)
+			insert(e);
 	}
 }

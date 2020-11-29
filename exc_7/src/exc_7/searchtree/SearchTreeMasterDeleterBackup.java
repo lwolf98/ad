@@ -1,14 +1,14 @@
 package exc_7.searchtree;
 
-public class SearchTree <T extends Comparable<T>> {
-	private TreeElement root;
+public class SearchTreeMasterDeleterBackup <T extends Comparable<T>> {
+	protected TreeElement root;
 	
-	private enum Direction {
+	protected enum Direction {
 		Left,
 		Right
 	}
 	
-	private class TreeElement {
+	protected class TreeElement {
 		public T value;
 		public TreeElement left;
 		public TreeElement right;
@@ -32,7 +32,7 @@ public class SearchTree <T extends Comparable<T>> {
 		}
 	}
 	
-	private class StepLog {
+	protected class StepLog {
 		public TreeElement cur;
 		public TreeElement prev;
 		public Direction dir;
@@ -44,21 +44,30 @@ public class SearchTree <T extends Comparable<T>> {
 		}
 	}
 	
-	public SearchTree() {
+	protected class ElemProcessed {
+		public void perform(TreeElement elem, Direction dir) {
+		}
+	}
+	
+	public SearchTreeMasterDeleterBackup() {
 		//...
 	}
 	
-	private void insert(TreeElement curRoot, TreeElement elem) {
+	protected void insert(TreeElement curRoot, TreeElement elem, ElemProcessed p) {
 		if(elem.value.compareTo(curRoot.value) <= 0) {
 			if(curRoot.left == null)
 				curRoot.left = elem;
 			else
-				insert(curRoot.left, elem);
+				insert(curRoot.left, elem, p);
+
+			p.perform(curRoot, Direction.Left);
 		} else {
 			if(curRoot.right == null)
 				curRoot.right = elem;
 			else
-				insert(curRoot.right, elem);
+				insert(curRoot.right, elem, p);
+			
+			p.perform(curRoot, Direction.Right);
 		}
 	}
 	
@@ -97,15 +106,23 @@ public class SearchTree <T extends Comparable<T>> {
 		return null;
 	}
 	
-	private StepLog getLast(TreeElement localRoot, Direction dir) {
+	private StepLog getLast(TreeElement localRoot, Direction dir, TreeElement localRootPrev) {
 		TreeElement cur = localRoot;
-		TreeElement prev = null;
+		TreeElement prev = localRootPrev;
 		
 		//TODO: Prüfung cur auf null?
 		
 		while(cur.getNext(dir) != null) {
 			prev = cur;
 			cur = cur.getNext(dir);
+		}
+		
+		//Wenn schleife nicht ausgeführt wurde
+		if(localRoot == cur) {
+			if(dir == Direction.Left)
+				dir = Direction.Right;
+			else
+				dir = Direction.Left;
 		}
 		
 		StepLog log = new StepLog(cur, prev, dir);
@@ -118,7 +135,7 @@ public class SearchTree <T extends Comparable<T>> {
 		if(root == null)
 			root = elem;
 		else
-			insert(root, elem);
+			insert(root, elem, new ElemProcessed());
 	}
 	
 	public boolean contains(T value) {
@@ -137,14 +154,7 @@ public class SearchTree <T extends Comparable<T>> {
 		return false;
 	}
 	
-	public void deleteValue(T value) {
-		//Wert finden
-		StepLog log = getElement(value);
-		
-		//Verlassen, wenn der Wert nicht gefunden wurde
-		if(log == null)
-			return;
-		
+	private boolean deleteValue(StepLog log) {
 		TreeElement prev = log.prev;
 		TreeElement cur = log.cur;
 		
@@ -155,7 +165,7 @@ public class SearchTree <T extends Comparable<T>> {
 			else
 				root = null;
 			
-			return;
+			return true;
 		}
 		
 		//2. Fall: ein Nachfolger
@@ -165,36 +175,45 @@ public class SearchTree <T extends Comparable<T>> {
 			else
 				root = cur.right;
 			
-			return;
+			return true;
 		} else if(cur.right == null) {
 			if(prev != null)
 				prev.setNext(log.dir, cur.left);
 			else
 				root = cur.left;
 			
-			return;
+			return true;
 		}
+		
+		return false;
+	}
+	
+	public void deleteValue(T value) {
+		//Wert finden
+		StepLog log = getElement(value);
+		
+		//Verlassen, wenn der Wert nicht gefunden wurde
+		if(log == null)
+			return;
+		
+		if(deleteValue(log))
+			return;
+		
+		TreeElement cur = log.cur;
 		
 		//3. Fall (regulär): zwei Nachfolger
 		
-		StepLog smallestRightLog = getLast(cur.right, Direction.Left);
-		TreeElement smallestRight = smallestRightLog.cur;
-		TreeElement smallestRightPrev = smallestRightLog.prev;
-		
-		if(prev != null)
-			prev.setNext(log.dir, smallestRight);
-		else
-			root = smallestRight;
-		
-		smallestRight.left = cur.left;
-		
-		if(cur.right != smallestRight)
-			smallestRight.right = cur.right;
-		
-		if(smallestRightPrev != null)
-			smallestRightPrev.setNext(Direction.Left, null);
+		StepLog smallestRightLog = getLast(cur.right, Direction.Left, cur);
+		swap(cur, smallestRightLog.cur);
+		deleteValue(smallestRightLog);
 	}
 	
+	private void swap(TreeElement elem1, TreeElement elem2) {
+		T tmp = elem1.value;
+		elem1.value = elem2.value;
+		elem2.value = tmp;
+	}
+
 	public void print() {
 		print(root);
 		System.out.println();
