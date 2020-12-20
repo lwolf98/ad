@@ -7,6 +7,8 @@ public class TestHash {
 	public static void main(String[] args) {
 		int m = 11;
 		
+		tst(3, 4, 5, 2);
+		
 		HashFunction h_ = s -> s;
 		ExtendedHashFunction h_lin = (s, i) -> (h_.exec(s) + i) % m;
 		ExtendedHashFunction h_square = (s, i) -> (h_.exec(s) + i + 3*i*i) % m;
@@ -26,5 +28,9 @@ public class TestHash {
 		HashTable tab_double = new HashTable(h_double, m);
 		tab_double.insert(10, 22, 31, 4, 15, 28, 17, 88, 59);
 		tab_double.print();
+	}
+	
+	public static void tst(int a, int... b) {
+		System.out.println(b.getClass().getSimpleName());
 	}
 }
