@@ -3,7 +3,7 @@ package exc_11.list;
 public class TestPriorityQueue {
 	public static void main(String[] args) {
 		//PriorityQueue q = new PriorityQueue(10);
-		PriorityQueueGeneric<Integer> q = new PriorityQueueGeneric<Integer>(10);
+		PriorityQueue<Integer> q = new PriorityQueue<Integer>(10);
 		q.insert(1, 10);
 		q.insert(2, 3);
 		q.insert(4, 15);

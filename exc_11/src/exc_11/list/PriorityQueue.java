@@ -1,79 +1,102 @@
 package exc_11.list;
 
-public class PriorityQueue {
-	private class QueueEntry {
-		int key;
-		Object elem;
-		
-		public QueueEntry(int key, Object elem) {
-			this.key = key;
-			this.elem = elem;
-		}
-	}
-	
-	private QueueEntry[] list;
+/*
+ * Platzkomplexität: ~ n * (1 + 2) (Arrayeintrag + 2 Felder von QueueEntry) => O(n)
+ */
+public class PriorityQueue<T> {
+	private QueueEntry<T>[] list;
 	private int curLast;
 	
+	@SuppressWarnings("unchecked")
 	public PriorityQueue(int len) {
 		list = new QueueEntry[len];
-		curLast = 0;
+		curLast = -1;
 	}
 	
 	public void print() {
-		for(int i = 0; i <= curLast; i++)
-			for(int j = 0; j < Math.pow(2, i) && Math.pow(2, i) < curLast + 1; j++)
-				System.out.println(list[j + (int)Math.pow(2, i) - 1].key + " ");
-	
+		for(int i = 0; i <= curLast; i++) {
+			for(int j = 0; j < Math.pow(2, i) && Math.pow(2, i) <= curLast; j++)
+				if(list[j + (int)Math.pow(2, i) - 1] != null)
+					System.out.print(list[j + (int)Math.pow(2, i) - 1].key + " ");
+		
+			System.out.println();
+		}
 	}
 	
-	public void insert(Object elem, int key) {
-		insert(elem, key, true);
-	}
-	
-	public void insert(Object elem, int key, boolean heapify) {
+	/*
+	 * Laufzeit: O(log n)
+	 */
+	public void insert(T elem, int key) {
 		if(curLast >= list.length - 1)
 			return;
 		
-		QueueEntry e = new QueueEntry(key, elem);
+		QueueEntry<T> e = new QueueEntry<T>(elem);
 		list[++curLast] = e;
 		
-		if(heapify)
-			heapify(0);
+		decreaseKey(curLast, key);
 	}
 	
-	public Object getMin() {
-		return list[0].elem;
+	/*
+	 * Laufzeit: O(1)
+	 */
+	public T getMin() {
+		return (T) list[0].elem;
 	}
 	
-	public Object extractMin() {
+	/*
+	 * Lauzeit: O(log n)
+	 */
+	public T extractMin() {
 		swap(0, curLast);
-		QueueEntry min = list[curLast];
+		QueueEntry<T> min = list[curLast];
 		list[curLast] = null;
 		curLast--;
 		
 		heapify(0);
 		
-		return min.elem;
+		return (T) min.elem;
 	}
 	
-	public void decreaseKey(Object elem, int pos, int key) {
-		QueueEntry cur = list[pos];
+	/*
+	 * Laufzeit: O(n) ...
+	 */
+	public void decreaseKey(T elem, int key) {
+		decreaseKey(indexOf(elem), key);
+	}
+	
+	/*
+	 * Laufzeit: O(log n)
+	 */
+	private void decreaseKey(int pos, int key) {
+		QueueEntry<T> cur = list[pos];
 		if(cur.key <= key)
 			return;
 		
 		cur.key = key;
-		heapify(0); //heapify von 0 aus nötig?
-	}
-	
-	public void buildHeap(Object[] elements) {
-		for(Object elem : elements)
-			insert(elem, Integer.MAX_VALUE, false);
 		
-		int n = curLast + 1;
-		for(int i = (n - 2) / 2; i >= 0; i--)
-			heapify(i);
+		while (pos > 0) {
+			int pos_parent = (pos - 1) / 2;
+			if(list[pos_parent].key > cur.key)
+				swap(pos, pos_parent);
+			
+			pos = pos_parent;
+		}
 	}
 	
+	/*
+	 * Laufzeit: O(n) ...
+	 */
+	private int indexOf(T elem) {
+		for(int i = 0; i < list.length; i++)
+			if(elem.equals(list[i].elem))
+				return i;
+		
+		return -1;
+	}
+	
+	/*
+	 * Laufzeit: O(log n)
+	 */
 	private void heapify(int root) {
 		int smallest;
 		int left = root * 2 + 1;
@@ -92,9 +115,22 @@ public class PriorityQueue {
 		}
 	}
 	
+	/*
+	 * Laufzeit: O(1)
+	 */
 	private void swap(int pos1, int pos2) {
-		QueueEntry tmp = list[pos1];
+		QueueEntry<T> tmp = list[pos1];
 		list[pos1] = list[pos2];
 		list[pos2] = tmp;
+	}
+}
+
+class QueueEntry<T> {
+	int key;
+	T elem;
+	
+	public QueueEntry(T elem) {
+		key = Integer.MAX_VALUE;
+		this.elem = elem;
 	}
 }
