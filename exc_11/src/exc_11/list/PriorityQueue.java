@@ -59,6 +59,7 @@ public class PriorityQueue<T> {
 	
 	/*
 	 * Laufzeit: O(n) ...
+	 * => Mapping elem -> pos
 	 */
 	public void decreaseKey(T elem, int key) {
 		decreaseKey(indexOf(elem), key);
@@ -74,10 +75,12 @@ public class PriorityQueue<T> {
 		
 		cur.key = key;
 		
-		while (pos > 0) {
+		while(pos > 0) {
 			int pos_parent = (pos - 1) / 2;
 			if(list[pos_parent].key > cur.key)
 				swap(pos, pos_parent);
+			else
+				break; //break to reduce loops, condition should be included inside while(...)
 			
 			pos = pos_parent;
 		}
