@@ -17,21 +17,24 @@ public class FasterAPSP {
 				{inf, 5, 10, inf, inf, 0}
 			};
 		
-		apsp(w);
+		fasterApsp(w);
 	}
 	
-	private static int[][] apsp(int[][] w) {
+	private static int[][] fasterApsp(int[][] w) {
 		int n = w.length;
 		
 		System.out.println("L1:");
 		printMatrix(w, PRINT_WIDTH);
 		
 		int[][] lm = w;
-		for(int m = 2; m < n; m++) {
-			lm = extendShortestPaths(lm, w);
+		int m = 1;
+		do {
+			m += m;
+			lm = extendShortestPaths(lm, lm);
 			System.out.println("L" + m + ":");
 			printMatrix(lm, PRINT_WIDTH);
-		}
+			
+		} while(m < n);
 		
 		return lm;
 	}

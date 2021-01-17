@@ -31,13 +31,11 @@ public class FloydWarshall2 {
 		int n = w.length;
 		d = new int[n+1][n][n];
 		
-		//int[][] dk_prev = w;
 		d[0] = w;
 		
 		System.out.println("D0:");
 		printMatrix(d[0], PRINT_WIDTH);
 		
-		//int[][] dk = null;
 		for(int k = 1; k <= n; k++) {
 			d[k] = new int[n][n];
 			
