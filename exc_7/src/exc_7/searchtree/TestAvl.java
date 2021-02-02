@@ -54,6 +54,7 @@ public class TestAvl {
 		tree.print();
 		
 		
+		System.out.println("Example VL:");
 		tree.insert(18);
 		tree.insert(12);
 		tree.insert(27);

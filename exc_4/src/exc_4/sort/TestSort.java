@@ -8,6 +8,7 @@ import java.util.Random;
 import exc_4.sort.algorithms.BubbleSort;
 import exc_4.sort.algorithms.HeapSort;
 import exc_4.sort.algorithms.InsertionSort;
+import exc_4.sort.algorithms.OtherInsertionSort;
 import exc_4.sort.algorithms.QuickSort;
 import exc_4.sort.algorithms.QuickSortRandomPv;
 import exc_4.sort.algorithms.SelectionSort;
@@ -36,9 +37,14 @@ public class TestSort {
 		sorts.add(new QuickSort());
 		sorts.add(new QuickSortRandomPv());
 		sorts.add(new SelectionSort());
+		sorts.add(new OtherInsertionSort());
 		
 		for(SortAlgorithm s : sorts)
 			executeSortAndPrint(s);
+		
+		arr = new int[] {23, 40, 4, 76, 98, 74, 32, 59, 46, 72};
+		executeSortAndPrint(new HeapSort());
+		executeSortAndPrint(new QuickSort());
 	}
 	
 	private static void executeSortAndPrint(SortAlgorithm s) {
