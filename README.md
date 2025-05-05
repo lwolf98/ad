@@ -1,3 +1,4 @@
-# Algorithm implementations from Algorithms and Datastructure course at OTH Regensburg
+# Algorithms and Datastructures
 
-Implementations are in Java
+This repository contains implementations from the course of the same name at OTH Regensburg.
+Implementations are in Java.
